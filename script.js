@@ -1,82 +1,60 @@
 let parrafo = document.getElementById("seccion");
+let containerProductos = document.getElementById("products-container");
 
-let containerProductos = document.getElementById("products-container")
+const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-const productos = [
-  {
-    id: 1,
-    nombre: "River 96/97 TITULAR",
-    categoria: "Camisetas",   
-    precio: 42900,
-  },
-  {
-    id: 2,
-    nombre: "Boca Jrs. 2000 IMPORTADA",
-    categoria: "Camisetas",
-    precio: 42900,
-  },
-  {
-    id: 3,
-    nombre: "Shorts de futbol",
-    categoria: "Shorts",
-    precio: 27200,
-  },
-  {
-    id: 4, 
-    nombre: "Pilusos Bordados",
-    categoria: "Pilusos",   
-    precio: 15000,
-  },
-  {
-    id: 5,
-    nombre: "Buzo River Quilmes Retro Rojo",
-    categoria:"Buzos",
-    precio: 53500,
-  },
-  {
-    id: 6,
-    nombre: "Buzo Argentina Mundial 2006/2010/2014",
-    categoria: "Buzos",
-    precio: 53500,
-  },
-];
-
-const carrito = JSON.parse(localStorage.getItem("carrito")) || []
-if (carrito.length > 0){
-  copiarCarrito(carrito);
+if (carrito.length > 0) {
+  copiarCarrito();
 }
 
-const contenedorProductos = document.getElementById
-("products-container");
+fetch("./data/productos.json")
+  .then(response => response.json())
+  .then(productos => {
+    mostrarProductos(productos);
+  })
+  .catch(error => console.error("Error al cargar productos:", error));
 
- productos.forEach((producto) => {
-  let cardProducto = document.createElement("article");
-  cardProducto.classList = "product-item";
+function mostrarProductos(productos) {
+  productos.forEach((producto) => {
+    let cardProducto = document.createElement("article");
+    cardProducto.classList = "product-item";
 
-  cardProducto.innerHTML = `
+    cardProducto.innerHTML = `
+      <div class="product-img">
+        <img src="${producto.imagen}" alt="${producto.nombre}">
+      </div>
       <h2>Producto: ${producto.nombre}</h2>
       <p>Categoria: ${producto.categoria}</p>
-      <p>precio: $${producto.precio}</p>
-      <button id="btnComprar${producto.id}">Comprar</button>`;
+      <p>Precio: $${producto.precio}</p>
+      <button id="btnAgregar${producto.id}">Agregar</button>
+    `;
 
-    contenedorProductos.appendChild(cardProducto);
-    const botonComprar = document.getElementById(`btnComprar${producto.id}`);
+    containerProductos.appendChild(cardProducto);
 
-    botonComprar.addEventListener("click", () => {
-    alert(`Compra realizada: ${producto.nombre} por $${producto.precio}`);
+    const botonAgregar = document.getElementById(`btnAgregar${producto.id}`);
+    botonAgregar.addEventListener("click", () => {
+      carrito.push({
+        producto: producto.nombre,
+        precio: producto.precio
+      });
 
-     carrito.push({producto: producto.nombre, precio: producto.precio});
-
-     localStorage.setItem("carrito", JSON.stringify(carrito));
-
-     copiarCarrito();
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      copiarCarrito();
     });
- });
+  });
+}
 
- function copiarCarrito() {
+
+function copiarCarrito() {
   const contenedorCarrito = document.getElementById("cart-container");
-  contenedorCarrito.innerHTML = "<h2>Mi Carrito</h2>";
   
+  contenedorCarrito.innerHTML = "<h2>Mi Carrito</h2>";
+
+  if (carrito.length === 0) {
+    contenedorCarrito.innerHTML += "<p>El carrito está vacío</p>";
+    return;
+  }
+
   carrito.forEach((item, index) => {
     contenedorCarrito.innerHTML += `
       <p>
@@ -84,9 +62,38 @@ const contenedorProductos = document.getElementById
         <button onclick="eliminar(${index})">Eliminar</button>
       </p>`;
   });
+
+  let total = 0;
+  carrito.forEach(item => total += item.precio);
+
+  contenedorCarrito.innerHTML += `
+    <hr>
+    <h3>Total: $${total}</h3>
+    <button onclick="finalizarCompra()">Finalizar compra</button>
+  `;
 }
+
+
 function eliminar(index) {
   carrito.splice(index, 1);
   localStorage.setItem("carrito", JSON.stringify(carrito));
   copiarCarrito();
 }
+
+function finalizarCompra() {
+  let total = 0;
+  carrito.forEach(item => total += item.precio);
+
+  Swal.fire({
+    title: '¿Finalizar compra?',
+    text: `El total es $${total}`,
+    background: "linear-gradient(to right, #ffffffff, #2f24c9ff)",
+    color: "white",
+    showCancelButton: true,
+    confirmButtonText: 'Sí, comprar',
+    cancelButtonText: 'Cancelar'
+  })
+      carrito.length = 0;
+      localStorage.removeItem("carrito");
+      copiarCarrito();
+    }

@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "nombre": "River 96/97 TITULAR",
+    "categoria": "Camisetas",
+    "precio": 42900,
+    "imagen": "./assets/img/River97.webp"
+  },
+  {
+    "id": 2,
+    "nombre": "Boca Jrs. 2000 IMPORTADA",
+    "categoria": "Camisetas",
+    "precio": 42900,
+    "imagen": "./assets/img/Boca20.webp"
+  },
+  {
+    "id": 3,
+    "nombre": "Shorts de futbol",
+    "categoria": "Shorts",
+    "precio": 27200,
+    "imagen": "./assets/img/short.png"
+  },
+  {
+    "id": 4,
+    "nombre": "Pilusos Bordados",
+    "categoria": "Pilusos",
+    "precio": 15000,
+    "imagen": "./assets/img/Piluso.jpg"
+  },
+  {
+    "id": 5,
+    "nombre": "Buzo River Quilmes Retro Rojo",
+    "categoria": "Buzos",
+    "precio": 53500,
+    "imagen": "./assets/img/BuzoRiver.webp"
+  },
+  {
+    "id": 6,
+    "nombre": "Buzo Boca 1995 Retro Azul",
+    "categoria": "Buzos",
+    "precio": 53500,
+    "imagen": "./assets/img/BuzoBoca.webp"
+  }
+]
